@@ -1,6 +1,6 @@
 "use client";
 
-export default function GhostInput({ text, suggestion, onChange, onKeyDown }) {
+export default function GhostInput({ text, suggestion, onChange, onKeyDown, inputRef }) {
   const remaining =
     suggestion.startsWith(text) ? suggestion.slice(text.length) : "";
 
@@ -12,6 +12,7 @@ export default function GhostInput({ text, suggestion, onChange, onKeyDown }) {
       </div>
 
       <input
+        ref={inputRef}
         className="typing-input"
         value={text}
         onChange={onChange}

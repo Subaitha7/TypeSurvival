@@ -6,8 +6,9 @@ export default function FloatingConfusion({ words }) {
   const items = useMemo(() => {
     return words.map((word) => ({
       word,
-      top: 20 + Math.random() * 40,
-      left: 20 + Math.random() * 60,
+      top:  15 + Math.random() * 50,
+      left: 5  + Math.random() * 75,
+      delay: Math.random() * 0.3,
     }));
   }, [words]);
 
@@ -17,7 +18,11 @@ export default function FloatingConfusion({ words }) {
         <span
           key={i}
           className="confusion-item"
-          style={{ top: `${item.top}%`, left: `${item.left}%` }}
+          style={{
+            top:            `${item.top}%`,
+            left:           `${item.left}%`,
+            animationDelay: `${item.delay}s`,
+          }}
         >
           {item.word}
         </span>
