@@ -519,7 +519,7 @@ body {
 .confusion-item {
   position: absolute;
   font-family: var(--font-vt);
-  font-size: 32px;
+  font-size: 24px;
   font-weight: bold;
   color: var(--yellow);
   text-shadow: 0 0 14px rgba(255,215,0,0.9), 0 0 28px rgba(255,215,0,0.5), 0 0 50px rgba(255,215,0,0.2);
@@ -989,4 +989,117 @@ body {
 @keyframes introArrowBounce {
   0%, 100% { transform: translateX(0); }
   50%       { transform: translateX(6px); }
+}
+
+/* ── Finish button save states ─────────────────────────── */
+.finish-btn--saving {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+.finish-btn--saving:disabled {
+  pointer-events: none;
+}
+.finish-btn--saved {
+  border-color: var(--green) !important;
+  color: var(--green) !important;
+}
+.finish-btn--error {
+  border-color: var(--red) !important;
+  color: var(--red) !important;
+}
+
+/* ── Username input on intro screen ────────────────────── */
+.intro-username-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 24px 0 8px;
+  width: 100%;
+  max-width: 340px;
+}
+.intro-username-label {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-dim);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.intro-username-input {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 15px;
+  padding: 10px 14px;
+  border-radius: 6px;
+  outline: none;
+  transition: border-color 0.15s;
+  width: 100%;
+  box-sizing: border-box;
+}
+.intro-username-input:focus {
+  border-color: var(--accent);
+}
+.intro-username-input--err {
+  border-color: var(--red) !important;
+}
+.intro-username-err {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--red);
+}
+
+/* ── Leaderboard tabs ───────────────────────────────────── */
+.lb-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 4px;
+}
+.lb-tab {
+  flex: 1;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--text-dim);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  padding: 8px 4px;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+  letter-spacing: 0.03em;
+}
+.lb-tab:hover {
+  color: var(--text);
+}
+.lb-tab--active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
+/* ── Leaderboard status / empty states ─────────────────── */
+.lb-status {
+  color: var(--text-dim);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  padding: 14px 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.lb-status--error {
+  color: var(--red);
+}
+.lb-retry-btn {
+  background: transparent;
+  border: 1px solid var(--red);
+  color: var(--red);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  padding: 3px 9px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.lb-retry-btn:hover {
+  background: var(--red);
+  color: var(--bg);
 }

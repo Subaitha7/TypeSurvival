@@ -35,6 +35,19 @@ function spawnBurst(x, y, char, isWrong, count = 1) {
    INTRO SCREEN
 ────────────────────────────────────────────────────────── */
 function IntroScreen({ onStart }) {
+  const [name, setName] = useState(() => {
+    if (typeof window !== "undefined") return localStorage.getItem("ts_username") || "";
+    return "";
+  });
+  const [err, setErr] = useState(false);
+
+  const handleStart = () => {
+    const trimmed = name.trim();
+    if (!trimmed) { setErr(true); return; }
+    localStorage.setItem("ts_username", trimmed);
+    onStart(trimmed);
+  };
+
   return (
     <div className="intro-screen">
       <div className="intro-content">
@@ -67,7 +80,26 @@ function IntroScreen({ onStart }) {
           </div>
         </div>
 
-        <button className="intro-start-btn" onClick={onStart}>
+        {/* Username input */}
+        <div className="intro-username-wrap">
+          <label className="intro-username-label" htmlFor="username-input">
+            Your name (shown on leaderboard)
+          </label>
+          <input
+            id="username-input"
+            className={`intro-username-input${err ? " intro-username-input--err" : ""}`}
+            type="text"
+            maxLength={20}
+            placeholder="e.g. speedrunner99"
+            value={name}
+            onChange={(e) => { setName(e.target.value); setErr(false); }}
+            onKeyDown={(e) => e.key === "Enter" && handleStart()}
+            autoFocus
+          />
+          {err && <span className="intro-username-err">Please enter a name to continue.</span>}
+        </div>
+
+        <button className="intro-start-btn" onClick={handleStart}>
           <span>Start Surviving</span>
           <span className="intro-start-arrow">→</span>
         </button>
@@ -80,8 +112,11 @@ function IntroScreen({ onStart }) {
    MAIN PAGE
 ────────────────────────────────────────────────────────── */
 export default function Page() {
-  const [showIntro, setShowIntro]   = useState(true);
-  const [gameReady, setGameReady]   = useState(false);
+  const [showIntro, setShowIntro]       = useState(true);
+  const [gameReady, setGameReady]       = useState(false);
+  const [saveState, setSaveState]       = useState("idle"); // idle | saving | saved | error
+  const [leaderboardKey, setLeaderboardKey] = useState(0);
+  const [username, setUsername]         = useState("");
 
   const [sentence, setSentence]     = useState([]);
   const [index, setIndex]           = useState(0);
@@ -95,11 +130,12 @@ export default function Page() {
 
   const {
     wpm, accuracy, kspc,
-    startTyping, addKeystroke, addCorrectChar, addWrongChar, resetMetrics,
+    startTyping, addKeystroke, addCorrectChar, addWrongChar,
+    resetMetrics, getFinalMetrics,
   } = useTypingMetrics();
 
-  const heatMode  = wpm >= 20 && wpm < 30;
-  const chaosMode = wpm >= 30;
+  const heatMode  = wpm >= 30 && wpm < 60;
+  const chaosMode = wpm >= 60;
   const chaosIntensity = chaosMode ? 3 : heatMode ? 2 : wpm >= 15 ? 1 : 0;
 
   useEffect(() => {
@@ -110,7 +146,8 @@ export default function Page() {
   const progress    = sentence.length > 0 ? (index / sentence.length) * 100 : 0;
 
   // Handle intro → game transition
-  const handleStartGame = () => {
+  const handleStartGame = (name) => {
+    setUsername(name);
     setShowIntro(false);
     setTimeout(() => setGameReady(true), 50);
   };
@@ -221,11 +258,33 @@ export default function Page() {
   };
 
   const handleFinish = async () => {
-    const survivalScore = wpm * accuracy;
-    await saveSession({ wpm, accuracy, kspc, survivalScore });
-    resetSession();
-  };
+    if (saveState === "saving") return;
+    setSaveState("saving");
 
+    // Read directly from refs — guaranteed fresh, never stale
+    const { wpm: fw, accuracy: fa, kspc: fk } = getFinalMetrics();
+    const survivalScore = fw * fa;
+
+    const result = await saveSession({
+      username,
+      wpm: fw,
+      accuracy: fa,
+      kspc: fk,
+      survivalScore,
+    });
+
+    if (result?.ok) {
+      setSaveState("saved");
+      setLeaderboardKey((k) => k + 1);
+    } else {
+      setSaveState("error");
+    }
+    setTimeout(() => {
+      setSaveState("idle");
+      resetSession();
+    }, 1200);
+  };
+  
   const suggestions = useMemo(() => {
     if (!inputRef.current) return [];
     return trie.getSuggestions(inputRef.current, 3);
@@ -326,13 +385,20 @@ export default function Page() {
           ))}
         </div>
 
-        <button className="finish-btn" onClick={handleFinish}>
-          Finish Session
+        <button
+          className={`finish-btn finish-btn--${saveState}`}
+          onClick={handleFinish}
+          disabled={saveState === "saving"}
+        >
+          {saveState === "saving" && "Saving…"}
+          {saveState === "saved"  && "Saved ✓"}
+          {saveState === "error"  && "Error ✕"}
+          {saveState === "idle"   && "Finish Session"}
         </button>
       </div>
 
       <div className="leaderboard">
-        <Leaderboard />
+        <Leaderboard username={username} refreshTrigger={leaderboardKey} />
       </div>
     </div>
   );

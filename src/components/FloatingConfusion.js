@@ -29,7 +29,7 @@ export default function FloatingConfusion({ words }) {
       top:      8 + Math.random() * 68,
       // Each word waits for the previous to fully appear before starting
       // Word 0: 0s, Word 1: 0.55s, Word 2: 1.1s
-      delay:    i * 1.55,
+      delay:    i * 0.55,
       entryDir: dirs[Math.floor(Math.random() * 3)],
       key:      `${word}-${generation}-${i}`,
     }));

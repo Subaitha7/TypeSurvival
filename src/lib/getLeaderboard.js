@@ -1,17 +1,14 @@
-import supabase from "./supabaseClient";
+export async function getLeaderboard({ username } = {}) {
+  try {
+    const url = username
+      ? `/api/leaderboard?username=${encodeURIComponent(username)}`
+      : "/api/leaderboard";
 
-export async function getLeaderboard() {
-
-  const { data, error } = await supabase
-    .from("sessions")
-    .select("*")
-    .order("survival_score", { ascending: false })
-    .limit(10);
-
-  if (error) {
-    console.error("Leaderboard error:", error.message);
+    const res = await fetch(url, { cache: "no-store" });
+    if (!res.ok) return [];
+    return await res.json();
+  } catch (err) {
+    console.error("getLeaderboard error:", err);
     return [];
   }
-
-  return data;
 }
