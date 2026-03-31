@@ -13,7 +13,7 @@ function ScoreRow({ s, index, showRank = true, showName = false }) {
   const rowKey = s.id || `${index}-${score}`;
 
   return (
-    <div key={rowKey} className="leaderboard-row">
+    <div key={rowKey} className="leaderboard-row" data-has-rank={showRank ? "true" : "false"}>
       {showRank && (
         <div className="leaderboard-rank">
           {index < 3 ? MEDALS[index] : `${index + 1}`}

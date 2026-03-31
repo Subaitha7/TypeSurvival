@@ -505,6 +505,7 @@ body {
 
 .leaderboard-stats span { color: var(--text); }
 .leaderboard-score { font-family: var(--font-vt); font-size: 22px; color: var(--green); }
+.leaderboard-row[data-has-rank="false"] { grid-template-columns: 1fr auto; }
 
 /* ─── Confusion Layer ────────────────────────────────── */
 .confusion-layer {

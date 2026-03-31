@@ -19,18 +19,20 @@ export async function GET(request) {
       return NextResponse.json([], { status: 200 });
     }
 
-    // hmget returns a single value (not array) when only 1 id — normalise to array
+    // Fetch sessions from hash
     let raw;
     if (ids.length === 1) {
       const single = await redis.hget("sessions", ids[0]);
       raw = [single];
     } else {
-      const raw = await redis.hmget("sessions", ids);
+      // hmget takes spread fields (not an array arg); returns { fieldName: value } object
+      const result = await redis.hmget("sessions", ...ids);
+      raw = result ? Object.values(result) : [];
     }
 
-    // Ensure raw is always an array before mapping
+    // Ensure raw is always an array
     if (!Array.isArray(raw)) {
-      raw = [raw];
+      raw = raw ? [raw] : [];
     }
 
     const sessions = raw

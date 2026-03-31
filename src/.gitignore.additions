@@ -1,3 +1,0 @@
-# Add these lines to your existing .gitignore:
-.env.local
-data/sessions.json
