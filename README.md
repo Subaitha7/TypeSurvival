@@ -1,6 +1,6 @@
 # ⚡ TypeSurvival
 
-A **fast-paced browser typing game** where confusion is the enemy — survive waves of tricky autocomplete, ghost inputs, and chaotic distractions by typing accurately and quickly.
+A **fast-paced browser typing game that fights back** where confusion is the enemy — survive waves of tricky autocomplete, ghost inputs, and chaotic distractions by typing accurately and quickly.
 
 ---
 
